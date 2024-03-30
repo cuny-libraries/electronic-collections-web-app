@@ -1,10 +1,15 @@
+import json
 from quart import Quart, render_template
 
 app = Quart(__name__)
 
+with open("data.json", "r") as f:
+   data = json.load(f)
+
 @app.route("/")
 async def index():
-    return await render_template("index.html")
+    count = len(data)
+    return await render_template("index.html", value=count)
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1")
+    app.run(debug=True)
