@@ -3,7 +3,6 @@ import json
 import math
 import os
 from dotenv import load_dotenv
-from pprint import pprint
 
 load_dotenv()
 
@@ -27,5 +26,5 @@ for page in range(pages):
 
 sorted_names = sorted(names, key=str.casefold)
 
-with open('data.json', 'w') as f:
+with open("data.json", "w") as f:
     json.dump(sorted_names, f)
