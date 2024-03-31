@@ -1,16 +1,16 @@
 import json
-from quart import Quart, render_template
+from flask import Flask, render_template
 
-app = Quart(__name__)
+app = Flask(__name__)
 
 with open("data.json", "r") as f:
     data = json.load(f)
 
 
 @app.route("/")
-async def index():
+def index():
     count = len(data)
-    return await render_template("index.html", count=count, data=data)
+    return render_template("index.html", count=count, data=data)
 
 
 if __name__ == "__main__":
