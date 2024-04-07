@@ -22,9 +22,9 @@ for page in range(pages):
     page_json = page_data.json()
 
     for x in page_json["electronic_collection"]:
-        names.append(x["public_name"])
+        names.append((x["public_name"], x["id"]))
 
-sorted_names = sorted(names, key=str.casefold)
+sorted_names = sorted(names, key=lambda x: x[0].casefold())
 
 with open("data.json", "w") as f:
     json.dump(sorted_names, f)
