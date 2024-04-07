@@ -11,14 +11,16 @@
     crossorigin="anonymous"
   ></script>
 </head>
-<body>
+<body style="padding: 30px 200px">
   <h1>Network Zone Electronic Collections</h1>
   <p>There are currently {{ count }} electronic collections in the NZ. This list is updated once per hour near the top of the hour.</p>
   <table class="table table-striped">
     <tbody>
       {% for item in data %}
       <tr>
-        <th scope="row">{{ item }}</th>
+        <th scope="row">
+          <span class="fw-bold">{{ item[0] }}</span> <span class="fw-normal">(id# {{ item[1] }})</span>
+        </th>
       </tr>
       {% endfor %}
     </tbody>
