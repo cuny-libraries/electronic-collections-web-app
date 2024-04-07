@@ -25,14 +25,14 @@
       {% for item in data %}
       <tr>
         <th scope="row">
-          <span class="fw-bold">{{ item[0] }}</span>
-          <span class="fw-normal">(id# {{ item[1] }})</span>
+          <div class="fw-bold" style="display: inline-block">{{ item[0] }}</div>
+          <div class="fw-normal" style="display: inline-block">(id# {{ item[1] }})</div>
           {% if item[2] %}
-            <span class="fw-normal">
+            <div class="fw-normal" style="margin: 10px 0 0 40px;">Groups:
               {% for group in item[2] %}
-                {{ group }}
+                {{ group }}{{ ", " if not loop.last else "" }}
               {% endfor %}
-            </span>
+            </div>
           {% endif %}
         </th>
       </tr>
