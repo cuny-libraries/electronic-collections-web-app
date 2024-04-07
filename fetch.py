@@ -3,7 +3,6 @@ import json
 import math
 import os
 from dotenv import load_dotenv
-from pprint import pprint
 
 load_dotenv()
 
@@ -11,8 +10,9 @@ apikey = os.getenv("NZ_API_KEY")
 url1 = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections?limit=100&offset={}&format=json&apikey={}"
 url2 = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/{}?apikey={}&format=json"
 
+
 def sub_fetch(id_number):
-    """ get e-collection level data """
+    """get e-collection level data"""
     sub_data = httpx.get(url2.format(id_number, apikey), timeout=500)
     sub_json = sub_data.json()
 
