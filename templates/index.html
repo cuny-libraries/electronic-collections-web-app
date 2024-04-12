@@ -27,13 +27,15 @@
         <th scope="row">
           <div class="fw-bold" style="display: inline-block">{{ item[0] }}</div>
           <div class="fw-normal" style="display: inline-block">(id# {{ item[1] }})</div>
-          {% if item[2] %}
-            <div class="fw-normal" style="margin: 10px 0 0 40px;">Groups:
+          <div class="fw-normal" style="margin: 10px 0 0 40px;">Groups:
+            {% if item[2] %}
               {% for group in item[2] %}
                 {{ group }}{{ ", " if not loop.last else "" }}
               {% endfor %}
-            </div>
-          {% endif %}
+            {% else %}
+              All CUNY Institutions
+            {% endif %}
+          </div>
         </th>
       </tr>
       {% endfor %}
