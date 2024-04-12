@@ -22,21 +22,11 @@ def sub_fetch(id_number):
         groups = []
         for group in group_data:
             groups.append(group["group"]["desc"])
-        return [sub_json["activation_date"], groups]
+        return groups
 
-    # if there are no groups or activation date
+    # if there are no groups
     except KeyError:
-        pass
-
-    # if there are no groups, but there is an activation date
-    try:
-        return [sub_json["activation_date"], False]
-
-    # if there is no activation date
-    except KeyError:
-        print(sub_json["public_name"])
-        return [False]
-
+        return False
 
 offset = 0
 data = httpx.get(url1.format(offset, apikey), timeout=500)
@@ -57,8 +47,7 @@ for page in range(pages):
 
         # function to run collection-level api call
         sub_return = sub_fetch(x["id"])
-        if sub_return[0]:
-            names.append((x["public_name"], x["id"], sub_return[1]))
+        names.append((x["public_name"], x["id"], sub_return))
 
 # sort alphabetically, case-insensitive
 sorted_names = sorted(names, key=lambda x: x[0].casefold())
