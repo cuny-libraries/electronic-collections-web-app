@@ -28,6 +28,7 @@ def sub_fetch(id_number):
     except KeyError:
         return False
 
+
 offset = 0
 data = httpx.get(url1.format(offset, apikey), timeout=500)
 json_data = data.json()
