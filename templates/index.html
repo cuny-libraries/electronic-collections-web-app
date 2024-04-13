@@ -27,14 +27,19 @@
         <th scope="row">
           <div class="fw-bold" style="display: inline-block">{{ item[0] }}</div>
           <div class="fw-normal" style="display: inline-block">(id# {{ item[1] }})</div>
-          <div class="fw-normal" style="margin: 10px 0 0 40px;">Groups:
-            {% if item[2] %}
-              {% for group in item[2] %}
-                {{ group }}{{ ", " if not loop.last else "" }}
-              {% endfor %}
-            {% else %}
-              All CUNY Institutions
-            {% endif %}
+          <div class="fw-normal dropdown" style="display: inline-block">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              Groups
+            </button>
+            <ul class="dropdown-menu">
+              {% if item[2] %}
+                {% for group in item[2] %}
+                  <li><a class="dropdown-item">{{ group }}</a></li>
+                {% endfor %}
+              {% else %}
+                <li><a class="dropdown-item">All CUNY Institutions</a></li>
+              {% endif %}
+            </ul>
           </div>
         </th>
       </tr>
