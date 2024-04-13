@@ -24,10 +24,12 @@
     <tbody>
       {% for item in data %}
       <tr>
-        <th scope="row">
-          <div class="fw-bold" style="display: inline-block">{{ item[0] }}</div>
-          <div class="fw-normal" style="display: inline-block">(id# {{ item[1] }})</div>
-          <div class="fw-normal dropdown" style="display: inline-block">
+        <th scope="row" class="d-flex align-items-center">
+          <div class="w-100 px-3">
+            <span class="fw-bold">{{ item[0] }}</span>
+            <span class="fw-normal">(id# {{ item[1] }})</span>
+          </div>
+          <div class="fw-normal dropdown px-3 flex-shrink-1">
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
               Groups
             </button>
