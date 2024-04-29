@@ -13,5 +13,12 @@ def index():
     return render_template("index.html", count=count, data=data)
 
 
+@app.after_request
+def add_security_headers(resp):
+    resp.headers["X-Content-Type-Options"] = "nosniff"
+    resp.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return resp
+
+
 if __name__ == "__main__":
     app.run(debug=True)
