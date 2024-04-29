@@ -17,6 +17,9 @@ def index():
 def add_security_headers(resp):
     resp.headers["X-Content-Type-Options"] = "nosniff"
     resp.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    resp.headers[
+        "Content-Security-Policy"
+    ] = "script-src 'self'; style-src 'self'; frame-ancestors https://cuny-ols.libanswers.com; default-src 'none'"
     return resp
 
 
