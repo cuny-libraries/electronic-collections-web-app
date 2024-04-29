@@ -24,13 +24,13 @@
       {% for item in data %}
         <tr>
           <th scope="row">
-            <div class="fw-bold" style="display: inline-block">
+            <div class="fw-bold inline-bl">
               {{ item[0] }}
             </div>
-            <div class="fw-normal" style="display: inline-block">
+            <div class="fw-normal inline-bl">
               (id# {{ item[1] }})
             </div>
-            <div class="fw-normal" style="margin: 10px 0 0 40px;">
+            <div class="fw-normal groups-loop" style="margin: 10px 0 0 40px;">
               Groups:
               {% if item[2] %}
                 {% for group in item[2] %}
