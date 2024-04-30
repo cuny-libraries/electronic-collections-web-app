@@ -54,5 +54,5 @@ for page in range(pages):
 sorted_names = sorted(names, key=lambda x: x[0].casefold())
 
 
-with open("data.json", "w") as f:
+with open("static/data.json", "w") as f:
     json.dump(sorted_names, f)

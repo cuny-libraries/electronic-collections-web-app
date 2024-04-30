@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for
 
 app = Flask(__name__)
 
-with open("/home/b7jl/electronic-collections-web-app/data.json", "r") as f:
+with open("/home/b7jl/electronic-collections-web-app/static/data.json", "r") as f:
     data = json.load(f)
 
 
