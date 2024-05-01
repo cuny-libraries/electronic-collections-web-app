@@ -16,17 +16,20 @@ def sub_fetch(id_number):
     sub_data = httpx.get(url2.format(id_number, apikey), timeout=500)
     sub_json = sub_data.json()
 
-    # see if there are groups
     try:
+        # get interface data
+        interface = sub_json["interface"]["name"]
+
+        # get groups data
         group_data = sub_json["group_setting"]
         groups = []
         for group in group_data:
             groups.append(group["group"]["desc"])
-        return groups
+        return groups, interface
 
     # if there are no groups
     except KeyError:
-        return False
+        return False, interface
 
 
 offset = 0
@@ -48,11 +51,11 @@ for page in range(pages):
 
         # function to run collection-level api call
         sub_return = sub_fetch(x["id"])
-        names.append((x["public_name"], x["id"], sub_return))
+        names.append((x["public_name"], x["id"], sub_return[0], sub_return[1]))
 
 # sort alphabetically, case-insensitive
 sorted_names = sorted(names, key=lambda x: x[0].casefold())
 
 
-with open("data.json", "w") as f:
+with open("static/data.json", "w") as f:
     json.dump(sorted_names, f)

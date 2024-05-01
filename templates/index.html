@@ -30,7 +30,7 @@
             <div class="fw-normal inline-bl">
               (id# {{ item[1] }})
             </div>
-            <div class="fw-normal groups-loop" style="margin: 10px 0 0 40px;">
+            <div class="fw-normal groups">
               Groups:
               {% if item[2] %}
                 {% for group in item[2] %}
@@ -39,6 +39,9 @@
               {% else %}
                 All CUNY Institutions
               {% endif %}
+            </div>
+            <div class="fw-normal interface">
+              Interface name: {{ item[3] }}
             </div>
           </th>
         </tr>
