@@ -40,9 +40,17 @@
                 All CUNY Institutions
               {% endif %}
             </div>
-            <div class="fw-normal interface">
-              Interface name: {{ item[3] }}
-            </div>
+            {% if item[3] %}
+              <div class="fw-normal interface">
+                Interface name: {{ item[3] }}
+              </div>
+            {% endif %}
+            {% if item[4] %}
+              <div class="fw-normal vendor">
+                Vendor name: {{ item[4] }}
+              </div>
+            {% endif %}
+            <div id="spacer"></div>
           </th>
         </tr>
       {% endfor %}

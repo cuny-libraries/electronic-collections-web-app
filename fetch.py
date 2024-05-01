@@ -15,7 +15,11 @@ def sub_fetch(id_number):
     """get e-collection level data"""
     sub_data = httpx.get(url2.format(id_number, apikey), timeout=500)
     sub_json = sub_data.json()
-    return [sub_fetch_groups(sub_json), sub_fetch_interface(sub_json), sub_fetch_vendors(sub_json)]
+    return [
+        sub_fetch_groups(sub_json),
+        sub_fetch_interface(sub_json),
+        sub_fetch_vendors(sub_json),
+    ]
 
 
 def sub_fetch_groups(sub_json):
@@ -46,7 +50,6 @@ def sub_fetch_vendors(sub_json):
         return False
 
 
-
 offset = 0
 data = httpx.get(url1.format(offset, apikey), timeout=500)
 json_data = data.json()
@@ -66,7 +69,9 @@ for page in range(pages):
 
         # function to run collection-level api call
         sub_return = sub_fetch(x["id"])
-        names.append((x["public_name"], x["id"], sub_return[0], sub_return[1], sub_return[2]))
+        names.append(
+            (x["public_name"], x["id"], sub_return[0], sub_return[1], sub_return[2])
+        )
 
 # sort alphabetically, case-insensitive
 sorted_names = sorted(names, key=lambda x: x[0].casefold())

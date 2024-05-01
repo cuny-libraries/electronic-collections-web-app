@@ -1,6 +1,8 @@
 .inline-bl { display: inline-block; }
 .groups { margin: 10px 0 0 40px; }
-.interface { margin: 0 0 5px 40px; }
+.interface { margin: 0 0 0 40px; }
+.vendor { margin: 0 0 0 40px; }
+#spacer { margin: 0 0 5px 0; }
 
 @media (max-width: 1000px) {
         body { padding: 30px }
