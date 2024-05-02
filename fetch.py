@@ -50,32 +50,36 @@ def sub_fetch_vendors(sub_json):
         return False
 
 
-offset = 0
-data = httpx.get(url1.format(offset, apikey), timeout=500)
-json_data = data.json()
+def main():
+    offset = 0
+    data = httpx.get(url1.format(offset, apikey), timeout=500)
+    json_data = data.json()
 
-# calculate the number of pages of results
-pages = math.ceil(json_data["total_record_count"] / 100)
+    # calculate the number of pages of results
+    pages = math.ceil(json_data["total_record_count"] / 100)
 
-names = []
+    names = []
 
-# paginate
-for page in range(pages):
-    offset = page * 100
-    page_data = httpx.get(url1.format(offset, apikey), timeout=500)
-    page_json = page_data.json()
+    # paginate
+    for page in range(pages):
+        offset = page * 100
+        page_data = httpx.get(url1.format(offset, apikey), timeout=500)
+        page_json = page_data.json()
 
-    for x in page_json["electronic_collection"]:
+        for x in page_json["electronic_collection"]:
 
-        # function to run collection-level api call
-        sub_return = sub_fetch(x["id"])
-        names.append(
-            (x["public_name"], x["id"], sub_return[0], sub_return[1], sub_return[2])
-        )
+            # function to run collection-level api call
+            sub_return = sub_fetch(x["id"])
+            names.append(
+                (x["public_name"], x["id"], sub_return[0], sub_return[1], sub_return[2])
+            )
 
-# sort alphabetically, case-insensitive
-sorted_names = sorted(names, key=lambda x: x[0].casefold())
+    # sort alphabetically, case-insensitive
+    sorted_names = sorted(names, key=lambda x: x[0].casefold())
+
+    with open("static/data.json", "w") as f:
+        json.dump(sorted_names, f)
 
 
-with open("static/data.json", "w") as f:
-    json.dump(sorted_names, f)
+if __name__ == "__main__":
+    main()
