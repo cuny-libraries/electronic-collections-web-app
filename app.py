@@ -17,7 +17,7 @@ def index():
     utc_time = datetime.fromtimestamp(ctime).replace(tzinfo=pytz.utc)
     tz = pytz.timezone("America/New_York")
     dt = utc_time.astimezone(tz)
-    output_time = dt.strftime("%-I:%M %p")
+    output_time = dt.strftime("%-I:%M%p (%Z)")
 
     count = len(data)
     return render_template("index.html", count=count, data=data, time=output_time)
