@@ -13,13 +13,29 @@ def index():
     with open(PATH, "r") as f:
         data = json.load(f)
 
+    # create time to be displayed
     ctime = os.path.getctime(PATH)
     utc_time = datetime.fromtimestamp(ctime).replace(tzinfo=pytz.utc)
     tz = pytz.timezone("America/New_York")
     dt = utc_time.astimezone(tz)
     output_time = dt.strftime("%-I:%M%p (%Z)")
 
-    count = len(data)
+    # swap in new library names
+    for record in data:
+        try:
+            newschools = []
+            for school in record[2]:
+                if school == "Manhattan Community College":
+                    newschools.append("Borough of Manhattan Community College")
+                elif school == "Fiorello H LaGuardia Community College Library":
+                    newschools.append("LaGuardia Community College")
+                else:
+                    newschools.append(school)
+        except TypeError:
+            pass
+        record[2] = newschools
+
+    count = len(data)  # the number of collections
     return render_template("index.html", count=count, data=data, time=output_time)
 
 
