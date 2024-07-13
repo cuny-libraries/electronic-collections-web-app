@@ -31,9 +31,9 @@ def index():
                     newschools.append("LaGuardia Community College")
                 else:
                     newschools.append(school)
+            record[2] = newschools
         except TypeError:
             pass
-        record[2] = newschools
 
     count = len(data)  # the number of collections
     return render_template("index.html", count=count, data=data, time=output_time)
