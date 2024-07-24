@@ -37,8 +37,7 @@ def sub_fetch_cz_ids(sub_json):
             if "EXLCZ" in number:
                 cz_mms_id = number[7:]
                 return [cz_mms_id, "CZ"]
-            else:
-                return [sub_json["id"], "IZ"]
+        return [sub_json["id"], "IZ"]
     except KeyError:
         return [sub_json["id"], "IZ"]
 
