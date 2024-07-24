@@ -36,11 +36,11 @@ def sub_fetch_cz_ids(sub_json):
         for number in bibs_json["network_number"]:
             if "EXLCZ" in number:
                 cz_mms_id = number[7:]
-                return cz_mms_id
+                return [cz_mms_id, "CZ"]
             else:
-                return sub_json["id"]
+                return [sub_json["id"], "IZ"]
     except KeyError:
-        return sub_json["id"]
+        return [sub_json["id"], "IZ"]
 
 
 def sub_fetch_groups(sub_json):
@@ -92,7 +92,7 @@ def main():
             # function to run collection-level api call
             sub_return = sub_fetch(x["id"])
             names.append(
-                (x["public_name"], sub_return[0], sub_return[1], sub_return[2], sub_return[3])
+                (x["public_name"], sub_return[0], sub_return[1], sub_return[2], sub_return[3][0], sub_return[3][1])
             )
 
     # sort alphabetically, case-insensitive
