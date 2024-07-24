@@ -5,8 +5,8 @@ from datetime import datetime
 from flask import Flask, render_template, url_for
 
 app = Flask(__name__)
-PATH = "/home/b7jl/electronic-collections-web-app/static/data.json"
-
+#PATH = "/home/b7jl/electronic-collections-web-app/static/data.json"
+PATH = "static/data.json"
 
 @app.route("/")
 def index():
@@ -24,14 +24,14 @@ def index():
     for record in data:
         try:
             newschools = []
-            for school in record[2]:
+            for school in record[1]:
                 if school == "Manhattan Community College":
                     newschools.append("Borough of Manhattan Community College")
                 elif school == "Fiorello H LaGuardia Community College Library":
                     newschools.append("LaGuardia Community College")
                 else:
                     newschools.append(school)
-            record[2] = newschools
+            record[1] = newschools
         except TypeError:
             pass
 

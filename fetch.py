@@ -33,7 +33,6 @@ def sub_fetch_cz_ids(sub_json):
         nz_mms_id = sub_json["resource_metadata"]["mms_id"]["value"]
         bibs_data = httpx.get(url3.format(nz_mms_id, apikey2), timeout=500)
         bibs_json = bibs_data.json()
-        pprint(bibs_json)
         for number in bibs_json["network_number"]:
             if "EXLCZ" in number:
                 cz_mms_id = number[7:]
@@ -42,6 +41,7 @@ def sub_fetch_cz_ids(sub_json):
                 return sub_json["id"]
     except KeyError:
         return sub_json["id"]
+
 
 def sub_fetch_groups(sub_json):
     """get groups data"""
