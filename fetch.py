@@ -3,23 +3,34 @@ import json
 import math
 import os
 from dotenv import load_dotenv
+from pprint import pprint
 
 load_dotenv()
 
-apikey = os.getenv("NZ_API_KEY")
+apikey1 = os.getenv("NZ_API_KEY")
+apikey2 = os.getenv("BIBS_NZ_API_KEY")
 url1 = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections?limit=100&offset={}&format=json&apikey={}"
 url2 = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/{}?apikey={}&format=json"
+url3 = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/{}?apikey={}&format=json"
 
 
 def sub_fetch(id_number):
     """get e-collection level data"""
-    sub_data = httpx.get(url2.format(id_number, apikey), timeout=500)
+    sub_data = httpx.get(url2.format(id_number, apikey1), timeout=500)
     sub_json = sub_data.json()
     return [
         sub_fetch_groups(sub_json),
         sub_fetch_interface(sub_json),
         sub_fetch_vendors(sub_json),
+        sub_fetch_cz_ids(sub_json),
     ]
+
+
+def sub_fetch_cz_ids(sub_json):
+    """get cz id"""
+    nz_mms_id = sub_json["resource_metadata"]["mms_id"]["value"]
+    bibs_data = httpx.get(url3.format(nz_mms_id, apikey2), timeout=500)
+    exit()
 
 
 def sub_fetch_groups(sub_json):
@@ -52,7 +63,7 @@ def sub_fetch_vendors(sub_json):
 
 def main():
     offset = 0
-    data = httpx.get(url1.format(offset, apikey), timeout=500)
+    data = httpx.get(url1.format(offset, apikey1), timeout=500)
     json_data = data.json()
 
     # calculate the number of pages of results
@@ -63,7 +74,7 @@ def main():
     # paginate
     for page in range(pages):
         offset = page * 100
-        page_data = httpx.get(url1.format(offset, apikey), timeout=500)
+        page_data = httpx.get(url1.format(offset, apikey1), timeout=500)
         page_json = page_data.json()
 
         for x in page_json["electronic_collection"]:
