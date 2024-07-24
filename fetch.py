@@ -2,6 +2,7 @@ import httpx
 import json
 import math
 import os
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from pprint import pprint
 
@@ -30,7 +31,14 @@ def sub_fetch_cz_ids(sub_json):
     """get cz id"""
     nz_mms_id = sub_json["resource_metadata"]["mms_id"]["value"]
     bibs_data = httpx.get(url3.format(nz_mms_id, apikey2), timeout=500)
-    exit()
+    bibs_json = bibs_data.json()
+    bibs_xml = bibs_json["anies"][0]
+    soup = BeautifulSoup(bibs_xml, features="xml")
+    subfields = soup.find_all("subfield")
+    for subfield in subfields:
+        if "EXLCZ" in subfield.string:
+            cz_mms_id = subfield.string[7:]
+    return cz_mms_id
 
 
 def sub_fetch_groups(sub_json):
