@@ -29,17 +29,19 @@ def sub_fetch(id_number):
 
 def sub_fetch_cz_ids(sub_json):
     """get cz id"""
-    nz_mms_id = sub_json["resource_metadata"]["mms_id"]["value"]
-    bibs_data = httpx.get(url3.format(nz_mms_id, apikey2), timeout=500)
-    bibs_json = bibs_data.json()
-    bibs_xml = bibs_json["anies"][0]
-    soup = BeautifulSoup(bibs_xml, features="xml")
-    subfields = soup.find_all("subfield")
-    for subfield in subfields:
-        if "EXLCZ" in subfield.string:
-            cz_mms_id = subfield.string[7:]
-    return cz_mms_id
-
+    try:
+        nz_mms_id = sub_json["resource_metadata"]["mms_id"]["value"]
+        bibs_data = httpx.get(url3.format(nz_mms_id, apikey2), timeout=500)
+        bibs_json = bibs_data.json()
+        pprint(bibs_json)
+        for number in bibs_json["network_number"]:
+            if "EXLCZ" in number:
+                cz_mms_id = number[7:]
+                return cz_mms_id
+            else:
+                return sub_json["id"]
+    except KeyError:
+        return sub_json["id"]
 
 def sub_fetch_groups(sub_json):
     """get groups data"""
@@ -90,7 +92,7 @@ def main():
             # function to run collection-level api call
             sub_return = sub_fetch(x["id"])
             names.append(
-                (x["public_name"], x["id"], sub_return[0], sub_return[1], sub_return[2])
+                (x["public_name"], sub_return[0], sub_return[1], sub_return[2], sub_return[3])
             )
 
     # sort alphabetically, case-insensitive

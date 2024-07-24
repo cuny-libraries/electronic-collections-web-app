@@ -28,26 +28,26 @@
               {{ item[0] }}
             </div>
             <div class="fw-normal inline-bl">
-              (id# {{ item[1] }})
+              (CZ id# {{ item[4] }})
             </div>
             <div class="fw-normal groups">
               Groups:
-              {% if item[2] %}
-                {% for group in item[2] %}
+              {% if item[1] %}
+                {% for group in item[1] %}
                   {{ group }}{{ ", " if not loop.last else "" }}
                 {% endfor %}
               {% else %}
                 All CUNY Institutions
               {% endif %}
             </div>
-            {% if item[3] %}
+            {% if item[2] %}
               <div class="fw-normal interface">
-                Interface name: {{ item[3] }}
+                Interface name: {{ item[2] }}
               </div>
             {% endif %}
-            {% if item[4] %}
+            {% if item[3] %}
               <div class="fw-normal vendor">
-                Vendor name: {{ item[4] }}
+                Vendor name: {{ item[3] }}
               </div>
             {% endif %}
             <div id="spacer"></div>
