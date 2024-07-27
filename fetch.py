@@ -2,7 +2,6 @@ import httpx
 import json
 import math
 import os
-from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from pprint import pprint
 
@@ -36,10 +35,10 @@ def sub_fetch_cz_ids(sub_json):
         for number in bibs_json["network_number"]:
             if "EXLCZ" in number:
                 cz_mms_id = number[7:]
-                return [cz_mms_id, "CZ"]
-        return [sub_json["id"], "IZ"]
+                return [cz_mms_id, "MMS ID"]
+        return [sub_json["id"], "Collection ID"]
     except KeyError:
-        return [sub_json["id"], "IZ"]
+        return [sub_json["id"], "Collection ID"]
 
 
 def sub_fetch_groups(sub_json):
