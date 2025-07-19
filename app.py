@@ -4,9 +4,9 @@ import pytz
 from datetime import datetime
 from flask import Flask, render_template, url_for
 
+
 app = Flask(__name__)
-#PATH = "/home/b7jl/electronic-collections-web-app/static/data.json"
-PATH = "static/data.json"
+PATH="/home/b7jl/electronic-collections-web-app/static/data.json"
 
 @app.route("/")
 def index():

@@ -23,7 +23,13 @@ def sub_fetch(id_number):
         sub_fetch_interface(sub_json),
         sub_fetch_vendors(sub_json),
         sub_fetch_cz_ids(sub_json),
+        sub_fetch_public_name_override(sub_json)
     ]
+
+
+def sub_fetch_public_name_override(sub_json):
+    """get public name override"""
+    return sub_json["public_name_override"]
 
 
 def sub_fetch_cz_ids(sub_json):
@@ -90,7 +96,7 @@ def main():
             # function to run collection-level api call
             sub_return = sub_fetch(x["id"])
             names.append(
-                (x["public_name"], sub_return[0], sub_return[1], sub_return[2], sub_return[3][0], sub_return[3][1])
+                (x["public_name"], sub_return[0], sub_return[1], sub_return[2], sub_return[3][0], sub_return[3][1], sub_return[4])
             )
 
     # sort alphabetically, case-insensitive

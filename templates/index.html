@@ -30,6 +30,13 @@
             <div class="fw-normal inline-bl">
               ({{ item[5] }}# {{ item[4] }})
             </div>
+            <div class="fw-normal override">
+              {% if item[6] %}
+                Public name override: {{ item[6] }}
+              {% else %}
+                Public name override: <em>none</em>
+              {% endif %}
+            </div>
             <div class="fw-normal groups">
               Groups:
               {% if item[1] %}
