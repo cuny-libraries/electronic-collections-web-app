@@ -30,6 +30,37 @@ python3 generate.py /var/www/html/electronic-collections/index.html
 
 ## Deployment
 
+### Server setup
+
+The repo should live in your home directory, keeping credentials out of the web root. The generated `index.html` is written directly to the Apache-served directory.
+
+SSH into the server and run:
+
+```
+git clone -b static-site https://github.com/cuny-libraries/electronic-collections-web-app.git ~/electronic-collections-web-app
+cd ~/electronic-collections-web-app
+pip install -r requirements.txt
+```
+
+Create the `.env` file with your API keys:
+
+```
+cp .env.sample .env
+nano .env
+```
+
+Make sure the output directory exists:
+
+```
+mkdir -p /var/www/html/electronic-collections
+```
+
+Run the script once to verify everything works:
+
+```
+python3 generate.py /var/www/html/electronic-collections/index.html
+```
+
 ### Cron job
 
 A cron job runs `generate.py` automatically on a schedule to keep the page current. Cron jobs are stored in a per-user file called a crontab.
@@ -43,7 +74,7 @@ crontab -e
 This opens the file in a text editor (usually `nano`). Add the following line to run the script every hour:
 
 ```
-0 * * * * cd /var/www/html/electronic-collections && python3 generate.py /var/www/html/electronic-collections/index.html
+0 * * * * cd ~/electronic-collections-web-app && python3 generate.py /var/www/html/electronic-collections/index.html
 ```
 
 The format is: `minute hour day month weekday command`. `0 * * * *` means "at minute 0 of every hour".
