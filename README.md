@@ -43,7 +43,7 @@ crontab -e
 This opens the file in a text editor (usually `nano`). Add the following line to run the script every hour:
 
 ```
-0 * * * * cd /home/b7jl/electronic-collections-web-app && python3 generate.py /var/www/html/electronic-collections/index.html
+0 * * * * cd /var/www/html/electronic-collections && python3 generate.py /var/www/html/electronic-collections/index.html
 ```
 
 The format is: `minute hour day month weekday command`. `0 * * * *` means "at minute 0 of every hour".
