@@ -9,8 +9,7 @@ Usage:
     output_path defaults to ./index.html
 
 Environment variables (loaded from .env if present):
-    NZ_API_KEY        Network Zone API key
-    BIBS_NZ_API_KEY   Bibliographic NZ API key
+    NZ_API_KEY   Alma API key (requires Electronic Collections and Bibs read permissions)
 """
 
 import html
@@ -27,8 +26,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-apikey1 = os.getenv("NZ_API_KEY")
-apikey2 = os.getenv("BIBS_NZ_API_KEY")
+apikey = os.getenv("NZ_API_KEY")
 
 URL_LIST = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections?limit=100&offset={}&format=json&apikey={}"
 URL_COLL = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/{}?apikey={}&format=json"
@@ -170,7 +168,7 @@ def render_row(item):
 
 
 def fetch_collection(coll_id):
-    sub = _get_json(URL_COLL.format(coll_id, apikey1))
+    sub = _get_json(URL_COLL.format(coll_id, apikey))
 
     try:
         groups = [g["group"]["desc"] for g in sub["group_setting"]]
@@ -191,7 +189,7 @@ def fetch_collection(coll_id):
 
     try:
         nz_mms_id = sub["resource_metadata"]["mms_id"]["value"]
-        bibs = _get_json(URL_BIBS.format(nz_mms_id, apikey2))
+        bibs = _get_json(URL_BIBS.format(nz_mms_id, apikey))
         for number in bibs.get("network_number", []):
             if "EXLCZ" in number:
                 return groups, iface, vendor, number[7:], "MMS ID", override
@@ -202,7 +200,7 @@ def fetch_collection(coll_id):
 
 
 def fetch_all():
-    first = _get_json(URL_LIST.format(0, apikey1))
+    first = _get_json(URL_LIST.format(0, apikey))
     total = first.get("total_record_count")
     if total is None:
         sys.exit("Error: unexpected API response — 'total_record_count' missing. Check your API key.")
@@ -211,7 +209,7 @@ def fetch_all():
     records = []
     for page in range(pages):
         offset = page * 100
-        page_data = _get_json(URL_LIST.format(offset, apikey1))
+        page_data = _get_json(URL_LIST.format(offset, apikey))
         for coll in page_data.get("electronic_collection", []):
             groups, iface, vendor, id_val, id_type, override = fetch_collection(coll["id"])
             fixed_groups = [NAME_FIXES.get(g, g) for g in groups]
@@ -235,8 +233,8 @@ def current_time_et():
 
 
 def main():
-    if not apikey1 or not apikey2:
-        sys.exit("Error: NZ_API_KEY and BIBS_NZ_API_KEY must be set (check your .env file).")
+    if not apikey:
+        sys.exit("Error: NZ_API_KEY must be set (check your .env file).")
 
     output_path = sys.argv[1] if len(sys.argv) > 1 else "index.html"
 

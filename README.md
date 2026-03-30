@@ -5,11 +5,11 @@ For the Alma Extensibility Task Force
 
 ## Setup
 
-1. Copy `.env.sample` to `.env` and fill in your API keys:
+1. Copy `.env.sample` to `.env` and fill in your API key:
    ```
    NZ_API_KEY=...
-   BIBS_NZ_API_KEY=...
    ```
+   The key needs read permissions for both **Electronic Collections** and **Bibs**.
 
 2. Install dependencies:
    ```
