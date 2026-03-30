@@ -38,10 +38,6 @@ Run hourly on the server to keep the page current:
 0 * * * * cd /home/b7jl/electronic-collections-web-app && python3 generate.py /var/www/html/electronic-collections/index.html
 ```
 
-### Apache
-
-Drop `.htaccess` into `/var/www/html/electronic-collections/`. It sets the `Content-Security-Policy` header to allow embedding only from `cuny-ols.libanswers.com`. Requires `mod_headers` (`a2enmod headers`).
-
 ### LibAnswers iframe
 
 Add an HTML widget to the LibAnswers page:
