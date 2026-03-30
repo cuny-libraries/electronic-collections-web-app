@@ -13,7 +13,7 @@ For the Alma Extensibility Task Force
 
 2. Install dependencies:
    ```
-   pip install -r requirements.txt
+   python3 -m python3 -m pip install -r requirements.txt
    ```
 
 ## Usage
@@ -39,7 +39,7 @@ SSH into the server and run:
 ```
 git clone -b static-site https://github.com/cuny-libraries/electronic-collections-web-app.git ~/electronic-collections-web-app
 cd ~/electronic-collections-web-app
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
 Create the `.env` file with your API keys:
