@@ -32,10 +32,26 @@ python3 generate.py /var/www/html/electronic-collections/index.html
 
 ### Cron job
 
-Run hourly on the server to keep the page current:
+A cron job runs `generate.py` automatically on a schedule to keep the page current. Cron jobs are stored in a per-user file called a crontab.
+
+To open (or create) your crontab for editing, run:
+
+```
+crontab -e
+```
+
+This opens the file in a text editor (usually `nano`). Add the following line to run the script every hour:
 
 ```
 0 * * * * cd /home/b7jl/electronic-collections-web-app && python3 generate.py /var/www/html/electronic-collections/index.html
+```
+
+The format is: `minute hour day month weekday command`. `0 * * * *` means "at minute 0 of every hour".
+
+Save and exit (`Ctrl+O`, then `Enter`, then `Ctrl+X` in nano). To verify the cron job was saved, run:
+
+```
+crontab -l
 ```
 
 ### LibAnswers iframe
