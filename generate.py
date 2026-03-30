@@ -9,7 +9,7 @@ Usage:
     output_path defaults to ./index.html
 
 Environment variables (loaded from .env if present):
-    NZ_API_KEY   Alma API key (requires Electronic Collections and Bibs read permissions)
+    NZ_API_KEY   Alma API key (requires Electronic Collections read permission)
 """
 
 import html
@@ -30,7 +30,6 @@ apikey = os.getenv("NZ_API_KEY")
 
 URL_LIST = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections?limit=100&offset={}&format=json&apikey={}"
 URL_COLL = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/electronic/e-collections/{}?apikey={}&format=json"
-URL_BIBS = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs/{}?apikey={}&format=json"
 
 NAME_FIXES = {
     "Manhattan Community College": "Borough of Manhattan Community College",
@@ -44,6 +43,7 @@ HTML_TEMPLATE = """\
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NZ Electronic Collections</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
   <style>
     *, *::before, *::after {{ box-sizing: border-box; }}
     body {{
@@ -63,35 +63,59 @@ HTML_TEMPLATE = """\
       margin: 0 0 16px;
       color: #555;
     }}
-    table {{
-      width: 100%;
-      border-collapse: collapse;
+    .filters {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+      align-items: flex-end;
     }}
-    tbody tr:nth-child(even) {{
-      background: #f6f6f6;
-    }}
-    th {{
-      font-weight: normal;
-      text-align: left;
-      padding: 8px 12px;
-      border-bottom: 1px solid #e0e0e0;
-      vertical-align: top;
-    }}
-    .name {{
+    .filters label {{
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 12px;
       font-weight: 600;
-    }}
-    .id {{
       color: #555;
-      margin-left: 6px;
-      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }}
-    .meta {{
-      margin: 3px 0 0 1.5em;
+    .filters select {{
       font-size: 13px;
-      color: #444;
+      padding: 5px 8px;
+      border: 1px solid #767676;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      min-width: 180px;
     }}
-    .meta em {{
+    .filters select:focus {{
+      outline: 2px solid #4a90d9;
+      outline-offset: 1px;
+    }}
+    .table-wrapper {{
+      width: 100%;
+      overflow-x: auto;
+    }}
+    #collections {{
+      width: 100% !important;
+    }}
+    #collections thead th {{
+      white-space: nowrap;
+    }}
+    #collections tbody td {{
+      vertical-align: top;
+      line-height: 1.4;
+    }}
+    .override {{
+      font-size: 12px;
       color: #888;
+      margin-top: 3px;
+    }}
+    .dataTables_wrapper .dataTables_filter input {{
+      border: 1px solid #767676;
+      border-radius: 4px;
+      padding: 4px 8px;
     }}
   </style>
 </head>
@@ -99,12 +123,63 @@ HTML_TEMPLATE = """\
   <h1>Network Zone Electronic Collections</h1>
   <p class="summary">There are currently {count} electronic collections in the NZ.
   This list is updated roughly once per hour. The last update was at {time}.</p>
-  <table>
-    <tbody>
+  <div class="filters">
+{filter_selects}
+  </div>
+  <div class="table-wrapper">
+    <table id="collections" class="display" style="width:100%">
+      <thead>
+        <tr>
+          <th>Collection Name</th>
+          <th>Collection ID</th>
+          <th>Groups</th>
+          <th>Interface</th>
+          <th>Vendor</th>
+        </tr>
+      </thead>
+      <tbody>
 {rows}
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/iframe-resizer@4/js/iframeResizer.contentWindow.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+  <script>
+  $(function () {{
+    var table = $('#collections').DataTable({{
+      pageLength: 25,
+      lengthMenu: [10, 25, 50, 100],
+      order: [[0, 'asc']],
+      columnDefs: [{{ targets: '_all', defaultContent: '' }}]
+    }});
+
+    // Institution filter — rows marked "All CUNY Institutions" always pass
+    $.fn.dataTable.ext.search.push(function (settings, data) {{
+      var selected = $('#filter-institution').val();
+      if (!selected) return true;
+      var groups = data[2];
+      if (groups === 'All CUNY Institutions') return true;
+      return groups.split(', ').indexOf(selected) !== -1;
+    }});
+
+    // Interface filter
+    $.fn.dataTable.ext.search.push(function (settings, data) {{
+      var selected = $('#filter-interface').val();
+      return !selected || data[3] === selected;
+    }});
+
+    // Vendor filter
+    $.fn.dataTable.ext.search.push(function (settings, data) {{
+      var selected = $('#filter-vendor').val();
+      return !selected || data[4] === selected;
+    }});
+
+    $('.filters select').on('change', function () {{
+      table.draw();
+    }});
+  }});
+  </script>
 </body>
 </html>
 """
@@ -130,41 +205,44 @@ def _esc(value):
     return html.escape(str(value)) if value else ""
 
 
+def make_select(label, select_id, options):
+    opt_tags = [f'      <option value="">All {label}</option>']
+    for opt in sorted(options):
+        esc = html.escape(str(opt), quote=True)
+        opt_tags.append(f'      <option value="{esc}">{esc}</option>')
+    return (
+        f'    <label>{label}\n'
+        f'      <select id="{select_id}">\n'
+        + "\n".join(opt_tags) + "\n"
+        + f'      </select>\n'
+        + f'    </label>'
+    )
+
+
 def render_row(item):
     name = _esc(item[0])
     groups = item[1]
     iface = item[2]
     vendor = item[3]
-    id_val = _esc(item[4])
-    id_type = _esc(item[5])
-    override = item[6]
+    coll_id = _esc(item[4])
+    override = item[5]
 
-    lines = [
-        "      <tr>",
-        '        <th scope="row">',
-        f'          <span class="name">{name}</span>',
-        f'          <span class="id">({id_type}# {id_val})</span>',
-    ]
-
+    name_cell = f"<td>{name}"
     if override:
-        lines.append(f'          <div class="meta">Public name override: {_esc(override)}</div>')
-    else:
-        lines.append('          <div class="meta">Public name override: <em>none</em></div>')
+        name_cell += f'<div class="override">Public name override: {_esc(override)}</div>'
+    name_cell += "</td>"
 
-    if groups:
-        group_str = ", ".join(_esc(g) for g in groups)
-        lines.append(f'          <div class="meta">Groups: {group_str}</div>')
-    else:
-        lines.append('          <div class="meta">Groups: All CUNY Institutions</div>')
+    groups_str = ", ".join(_esc(g) for g in groups) if groups else "All CUNY Institutions"
 
-    if iface:
-        lines.append(f'          <div class="meta">Interface name: {_esc(iface)}</div>')
-
-    if vendor:
-        lines.append(f'          <div class="meta">Vendor name: {_esc(vendor)}</div>')
-
-    lines += ["        </th>", "      </tr>"]
-    return "\n".join(lines)
+    return (
+        "      <tr>\n"
+        f"        {name_cell}\n"
+        f"        <td>{coll_id}</td>\n"
+        f"        <td>{groups_str}</td>\n"
+        f"        <td>{_esc(iface)}</td>\n"
+        f"        <td>{_esc(vendor)}</td>\n"
+        "      </tr>"
+    )
 
 
 def fetch_collection(coll_id):
@@ -187,16 +265,7 @@ def fetch_collection(coll_id):
 
     override = sub.get("public_name_override")
 
-    try:
-        nz_mms_id = sub["resource_metadata"]["mms_id"]["value"]
-        bibs = _get_json(URL_BIBS.format(nz_mms_id, apikey))
-        for number in bibs.get("network_number", []):
-            if "EXLCZ" in number:
-                return groups, iface, vendor, number[7:], "MMS ID", override
-    except KeyError:
-        pass
-
-    return groups, iface, vendor, sub["id"], "Collection ID", override
+    return groups, iface, vendor, sub["id"], override
 
 
 def fetch_all():
@@ -211,15 +280,14 @@ def fetch_all():
         offset = page * 100
         page_data = _get_json(URL_LIST.format(offset, apikey))
         for coll in page_data.get("electronic_collection", []):
-            groups, iface, vendor, id_val, id_type, override = fetch_collection(coll["id"])
+            groups, iface, vendor, coll_id, override = fetch_collection(coll["id"])
             fixed_groups = [NAME_FIXES.get(g, g) for g in groups]
             records.append((
                 coll["public_name"],
                 fixed_groups,
                 iface,
                 vendor,
-                id_val,
-                id_type,
+                coll_id,
                 override,
             ))
 
@@ -244,10 +312,29 @@ def main():
     if not data:
         sys.exit("Error: API returned 0 collections — aborting to avoid overwriting the live page.")
 
+    # Collect unique values for filter dropdowns
+    all_institutions = set()
+    all_interfaces = set()
+    all_vendors = set()
+    for item in data:
+        for g in item[1]:
+            all_institutions.add(g)
+        if item[2]:
+            all_interfaces.add(item[2])
+        if item[3]:
+            all_vendors.add(item[3])
+
+    filter_selects = "\n".join([
+        make_select("Institution", "filter-institution", all_institutions),
+        make_select("Interface", "filter-interface", all_interfaces),
+        make_select("Vendor", "filter-vendor", all_vendors),
+    ])
+
     rows_html = "\n".join(render_row(item) for item in data)
     content = HTML_TEMPLATE.format(
         count=len(data),
         time=current_time_et(),
+        filter_selects=filter_selects,
         rows=rows_html,
     )
 

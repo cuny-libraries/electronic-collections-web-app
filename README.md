@@ -9,7 +9,7 @@ For the Alma Extensibility Task Force
    ```
    NZ_API_KEY=...
    ```
-   The key needs read permissions for both **Electronic Collections** and **Bibs**.
+   The key needs **Electronic Collections** read permission.
 
 2. Install dependencies:
    ```
