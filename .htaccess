@@ -1,0 +1,5 @@
+# Apache config for /var/www/html/electronic-collections/
+# Allows this page to be embedded as an iframe in LibAnswers only.
+
+Header always set Content-Security-Policy "frame-ancestors https://cuny-ols.libanswers.com"
+Header always set X-Content-Type-Options "nosniff"
