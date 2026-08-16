@@ -23,7 +23,7 @@ packaging==26.2
 pathspec==1.1.1
 platformdirs==4.10.1
 priority==2.0.0
-python-dotenv==1.2.2
+python-dotenv==1.2.3
 pytokens==0.4.1
 pytz==2026.2
 Quart==0.20.0
